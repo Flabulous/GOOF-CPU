@@ -76,43 +76,27 @@ cpuRuntime();
 //SB - Subtract immediate 8 bits from register
 //AD - Add immediate 8 bits to register
 
-void LD_A() {a = ram[c]; b = (b & 0xF0) | 0x01;}
-void LD_B() {b = ram[c]; b = (b & 0xF0) | 0x01;}
-void LD_C() {c = ram[c]; b = (b & 0xF0) | 0x01;}
-void LD_D() {d = ram[c]; b = (b & 0xF0) | 0x01;}
+void LD_A() {printf("debug"); a = ram[c]; b = (b & 0xF0) | 0x01;}
+void LD_B() {printf("debug"); b = ram[c]; b = (b & 0xF0) | 0x01;}
+void LD_C() {printf("debug"); c = ram[c]; b = (b & 0xF0) | 0x01;}
+void LD_D() {printf("debug"); d = ram[c]; b = (b & 0xF0) | 0x01;}
 
-void WT_A() {ram[c] = a; b = (b & 0xF0) | 0x02;}
-void WT_B() {ram[c] = b; b = (b & 0xF0) | 0x02;}
-void WT_C() {ram[c] = c; b = (b & 0xF0) | 0x02;}
-void WT_D() {ram[c] = d; b = (b & 0xF0) | 0x02;}
+void WT_A() {printf("debug"); ram[c] = a; b = (b & 0xF0) | 0x02;}
+void WT_B() {printf("debug"); ram[c] = b; b = (b & 0xF0) | 0x02;}
+void WT_C() {printf("debug"); ram[c] = c; b = (b & 0xF0) | 0x02;}
+void WT_D() {printf("debug"); ram[c] = d; b = (b & 0xF0) | 0x02;}
 
-void SB_A() {d++; a -= rom[ram[0xFF]].bank[d]; b = (b & 0xF0) | 0x03;}
-void SB_B() {d++; b -= rom[ram[0xFF]].bank[d]; b = (b & 0xF0) | 0x03;}
-void SB_C() {d++; c -= rom[ram[0xFF]].bank[d]; b = (b & 0xF0) | 0x03;}
-void SB_D() {d++; d -= rom[ram[0xFF]].bank[d]; b = (b & 0xF0) | 0x03;}
+void SB_A() {printf("debug"); d++; a -= rom[ram[0xFF]].bank[d]; b = (b & 0xF0) | 0x03;}
+void SB_B() {printf("debug"); d++; b -= rom[ram[0xFF]].bank[d]; b = (b & 0xF0) | 0x03;}
+void SB_C() {printf("debug"); d++; c -= rom[ram[0xFF]].bank[d]; b = (b & 0xF0) | 0x03;}
+void SB_D() {printf("debug"); d++; d -= rom[ram[0xFF]].bank[d]; b = (b & 0xF0) | 0x03;}
 
-void AD_A() {d++; a += rom[ram[0xFF]].bank[d]; b = (b & 0xF0) | 0x04;}
-void AD_B() {d++; b += rom[ram[0xFF]].bank[d]; b = (b & 0xF0) | 0x04;}
-void AD_C() {d++; c += rom[ram[0xFF]].bank[d]; b = (b & 0xF0) | 0x04;}
-void AD_D() {d++; d += rom[ram[0xFF]].bank[d]; b = (b & 0xF0) | 0x04;}
+void AD_A() {printf("debug"); d++; a += rom[ram[0xFF]].bank[d]; b = (b & 0xF0) | 0x04;}
+void AD_B() {printf("debug"); d++; b += rom[ram[0xFF]].bank[d]; b = (b & 0xF0) | 0x04;}
+void AD_C() {printf("debug"); d++; c += rom[ram[0xFF]].bank[d]; b = (b & 0xF0) | 0x04;}
+void AD_D() {printf("debug"); d++; d += rom[ram[0xFF]].bank[d]; b = (b & 0xF0) | 0x04;}
 
-void (*insttable[0xF])() =
-{LD_A,
- LD_B,
- LD_C,
- LD_D,
- WT_A,
- WT_B,
- WT_C,
- WT_D,
- SB_A,
- SB_B,
- SB_C,
- SB_D,
- AD_A,
- AD_B,
- AD_C,
- AD_D,};
+void (*inst_table[0xF0])();
 
 int main()
 {
@@ -129,10 +113,35 @@ getrom:
     printf("Press Enter to run.\n");
     gets(input);
 
+    initTable();
     cpuRuntime();
     return 0;
 }
 
+int initTable()
+{
+    inst_table[0x00] = LD_A;
+    inst_table[0x10] = LD_B;
+    inst_table[0x20] = LD_C;
+    inst_table[0x30] = LD_D;
+
+    inst_table[0x40] = WT_A;
+    inst_table[0x50] = WT_B;
+    inst_table[0x60] = WT_C;
+    inst_table[0x70] = WT_D;
+
+    inst_table[0x80] = SB_A;
+    inst_table[0x90] = SB_B;
+    inst_table[0xA0] = SB_C;
+    inst_table[0xB0] = SB_D;
+
+    inst_table[0xC0] = AD_A;
+    inst_table[0xD0] = AD_B;
+    inst_table[0xE0] = AD_C;
+    inst_table[0xF0] = AD_D;
+
+    return 0;
+}
 int cpuRuntime()
 {
     int cycles =0;
@@ -146,8 +155,8 @@ int cpuRuntime()
     {
         printf("Cycles: %d, Counter: %d\n, Instruction: %x\n", cycles, d, rom[ram[0xFF]].bank[d]);
         d++;
-        (*insttable[rom[ram[0xFF]].bank[d]])();
-        sleep(1);
+        (*inst_table[rom[ram[0xFF]].bank[d]])();
+        //sleep(1);
         cycles++;
     }
     return 0;
