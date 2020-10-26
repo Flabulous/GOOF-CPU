@@ -66,8 +66,8 @@ char setupbit(char orig, char nibble) {
 }
 
 //Back-end functions
-initCore();
-cpuRuntime();
+int initTable();
+int cpuRuntime();
 
 //Instructions
 
@@ -96,7 +96,7 @@ void AD_B() {printf("debug"); d++; b += rom[ram[0xFF]].bank[d]; b = (b & 0xF0) |
 void AD_C() {printf("debug"); d++; c += rom[ram[0xFF]].bank[d]; b = (b & 0xF0) | 0x04;}
 void AD_D() {printf("debug"); d++; d += rom[ram[0xFF]].bank[d]; b = (b & 0xF0) | 0x04;}
 
-void (*inst_table[0xF0])();
+void (*inst_table[16])();
 
 int main()
 {
@@ -120,25 +120,25 @@ getrom:
 
 int initTable()
 {
-    inst_table[0x00] = LD_A;
-    inst_table[0x10] = LD_B;
-    inst_table[0x20] = LD_C;
-    inst_table[0x30] = LD_D;
+    inst_table[0x00] = &LD_A;
+    inst_table[0x01] = &LD_B;
+    inst_table[0x02] = &LD_C;
+    inst_table[0x03] = &LD_D;
 
-    inst_table[0x40] = WT_A;
-    inst_table[0x50] = WT_B;
-    inst_table[0x60] = WT_C;
-    inst_table[0x70] = WT_D;
+    inst_table[0x04] = &WT_A;
+    inst_table[0x05] = &WT_B;
+    inst_table[0x06] = &WT_C;
+    inst_table[0x07] = &WT_D;
 
-    inst_table[0x80] = SB_A;
-    inst_table[0x90] = SB_B;
-    inst_table[0xA0] = SB_C;
-    inst_table[0xB0] = SB_D;
+    inst_table[0x08] = &SB_A;
+    inst_table[0x09] = &SB_B;
+    inst_table[0x0A] = &SB_C;
+    inst_table[0x0B] = &SB_D;
 
-    inst_table[0xC0] = AD_A;
-    inst_table[0xD0] = AD_B;
-    inst_table[0xE0] = AD_C;
-    inst_table[0xF0] = AD_D;
+    inst_table[0x0C] = &AD_A;
+    inst_table[0x0D] = &AD_B;
+    inst_table[0x0E] = &AD_C;
+    inst_table[0x0F] = &AD_D;
 
     return 0;
 }
@@ -151,13 +151,20 @@ int cpuRuntime()
     d = 0;
     ram = malloc(256);
     ram[0xFF] = 0x00;
+
+   // for (int i = 16; i >= 0; i--) {
+   //     inst_table[i];
+   //     printf("%x\n",inst_table[i]);
+   // }
+
     while (ram[0xFF] != 0xFF)
     {
         printf("Cycles: %d, Counter: %d\n, Instruction: %x\n", cycles, d, rom[ram[0xFF]].bank[d]);
         d++;
-        (*inst_table[rom[ram[0xFF]].bank[d]])();
-        //sleep(1);
+        inst_table[rom[ram[0xFF]].bank[d]]();
+        sleep(1);
         cycles++;
+        printf("%x",ram[0xFF]);
     }
     return 0;
 }

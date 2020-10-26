@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1603751590 source:c:\users\arandor\documents\github\goof-cpu\main.c
+1603756086 source:c:\users\arandor\documents\github\goof-cpu\main.c
 	<stdio.h>
 	<stdlib.h>
 	<stdint.h>
