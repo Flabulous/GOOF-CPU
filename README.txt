@@ -1,3 +1,13 @@
+# GOOF-CPU
+Literally me goofing off and making an entire virtual 8-bit CPU in C.
+
+# Registers:
+A - Accumulator
+B - Flag
+C - RAM Counter
+D - ROM Counter
+
+# 16 Instructions:
 0x0 - Load ram pointed to by C into A register
 0x1 - Load ram pointed to by C into B register
 0x2 - Load ram pointed to by C into C register
@@ -17,3 +27,7 @@
 0xD - Add immediate 8bit data to B register
 0xE - Add immediate 8bit data to C register
 0xF - Add immediate 8bit data to D register
+
+# Bank Switching:
+GOOF supports up to 255 different 256-byte banks. Banks are automatically split and created from the .bin file. Editing RAM adress 0xFF will allow you to switch different banks. Writing 0xFF to this location will trigger an EoF and close the CPU.
+
