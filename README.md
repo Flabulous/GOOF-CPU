@@ -30,3 +30,4 @@ D - ROM Counter
 
 # Bank Switching:
 GOOF supports up to 255 different 256-byte banks. Banks are automatically split and created from the .bin file. Editing RAM adress 0xFF will allow you to switch different banks. Writing 0xFF to this location will trigger an EoF and close the CPU.
+
