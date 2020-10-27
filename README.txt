@@ -29,5 +29,5 @@ D - ROM Counter
 0x0F - Add immediate 8bit data to D register
 
 # Bank Switching:
-GOOF supports up to 255 different 256-byte banks. Banks are automatically split and created from the .bin file. Editing RAM adress 0xFF will allow you to switch different banks. Writing 0xFF to this location will trigger an EoF and close the CPU.
+GOOF supports up to 255 different 256-byte banks, for a total of 65280 bytes. Banks are automatically split and created from the .bin file. Editing RAM adress 0xFF will allow you to switch different banks. Writing 0xFF to this location will trigger an EoF and close the CPU.
 
