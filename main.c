@@ -160,8 +160,8 @@ int cpuRuntime()
     while (ram[0xFF] != 0xFF)
     {
         printf("Cycles: %d, Counter: %d\n, Instruction: %x\n", cycles, d, rom[ram[0xFF]].bank[d]);
-        d++;
         inst_table[rom[ram[0xFF]].bank[d]]();
+        d++;
         sleep(1);
         cycles++;
         printf("%x",ram[0xFF]);
