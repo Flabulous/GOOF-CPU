@@ -7,7 +7,7 @@ struct sbank {unsigned char *bank;};
 struct sbank rom[256];
 
 unsigned char *ram;
-unsigned char a,b,c,d; //Registers: a: accumulator | b: Flag / Second Accu | c: RAM pointer | d: ROM pointer
+unsigned char a,b,c,d; //Registers: a: Accumulator | b: Logical Accumulator | c: RAM pointer | d: ROM pointer
 
 //Front-end functions
 int pcopenrom(char nme[256])
@@ -49,20 +49,6 @@ int pcsetuprom()
     return 0;
 }
 
-char setlowbit(char orig, char nibble) {
-    char res = orig;
-    res &= 0xF0; // Clear out the lower nibble
-    res |= (nibble & 0x0F); // OR in the desired mask
-    return res;
-}
-
-char setupbit(char orig, char nibble) {
-    char res = orig;
-    res &= 0x0F; // Clear out the upper nibble
-    res |= ((nibble << 4) & 0xF0); // OR in the desired mask
-    return res;
-}
-
 //Back-end functions
 int initTable();
 int cpuRuntime();
@@ -74,33 +60,40 @@ int cpuRuntime();
 //SB - Subtract immediate 8 bits from register
 //AD - Add immediate 8 bits to register
 
-void LD_A() { a = ram[c]; b = (b & 0xF0) | 0x01;}
-void LD_B() { b = ram[c]; b = (b & 0xF0) | 0x01;}
-void LD_C() { c = ram[c]; b = (b & 0xF0) | 0x01;}
-void LD_D() { d = ram[c]; b = (b & 0xF0) | 0x01;}
+//I - Logical. Only affects the A register
 
-void WT_A() { ram[c] = a; b = (b & 0xF0) | 0x02;}
-void WT_B() { ram[c] = b; b = (b & 0xF0) | 0x02;}
-void WT_C() { ram[c] = c; b = (b & 0xF0) | 0x02;}
-void WT_D() { ram[c] = d; b = (b & 0xF0) | 0x02;}
+void LD_A() { a = ram[c];}
+void LD_B() { b = ram[c];}
+void LD_C() { c = ram[c];}
+void LD_D() { d = ram[c];}
 
-void SB_A() { d++; a -= rom[ram[0xFF]].bank[d]; b = (b & 0xF0) | 0x03;}
-void SB_B() { d++; b -= rom[ram[0xFF]].bank[d]; b = (b & 0xF0) | 0x03;}
-void SB_C() { d++; c -= rom[ram[0xFF]].bank[d]; b = (b & 0xF0) | 0x03;}
-void SB_D() { d++; d -= rom[ram[0xFF]].bank[d]; b = (b & 0xF0) | 0x03;}
+void WT_A() { ram[c] = a;}
+void WT_B() { ram[c] = a;}
+void WT_C() { ram[c] = c;}
+void WT_D() { ram[c] = d;}
 
-void AD_A() { d++; a += rom[ram[0xFF]].bank[d]; b = (b & 0xF0) | 0x04;}
-void AD_B() { d++; b += rom[ram[0xFF]].bank[d]; b = (b & 0xF0) | 0x04;}
-void AD_C() { d++; c += rom[ram[0xFF]].bank[d]; b = (b & 0xF0) | 0x04;}
-void AD_D() { d++; d += rom[ram[0xFF]].bank[d]; b = (b & 0xF0) | 0x04;}
+void SB_A() { d++; a -= rom[ram[0xFF]].bank[d];}
+void SB_B() { d++; b -= rom[ram[0xFF]].bank[d];}
+void SB_C() { d++; c -= rom[ram[0xFF]].bank[d];}
+void SB_D() { d++; d -= rom[ram[0xFF]].bank[d];}
 
-void (*inst_table[16])();
+void AD_A() { d++; a += rom[ram[0xFF]].bank[d];}
+void AD_B() { d++; a += rom[ram[0xFF]].bank[d];}
+void AD_C() { d++; c += rom[ram[0xFF]].bank[d];}
+void AD_D() { d++; d += rom[ram[0xFF]].bank[d];}
+
+void I_LD() { d++; if(b == rom[ram[0xFF]].bank[d]) {a = ram[c];}}
+void I_WT() { d++; if(b == rom[ram[0xFF]].bank[d]) {ram[c] = a;}}
+void I_SB() { d++; if(b == rom[ram[0xFF]].bank[d]) {d++; a -= rom[ram[0xFF]].bank[d];} else {d++;}}
+void I_AD() { d++; if(b == rom[ram[0xFF]].bank[d]) {d++; a += rom[ram[0xFF]].bank[d];} else {d++;}}
+
+void (*inst_table[256])();
 
 int main()
 {
     printf("GOOF CPU loaded.\n");
 
-    char input[256];
+    char input[0xFF];
 
 getrom:
     printf("Enter the name of the ROM:\n");
@@ -137,6 +130,11 @@ int initTable()
     inst_table[0x0D] = &AD_B;
     inst_table[0x0E] = &AD_C;
     inst_table[0x0F] = &AD_D;
+
+    inst_table[0x1A] = &I_LD;
+    inst_table[0x1B] = &I_WT;
+    inst_table[0x1C] = &I_SB;
+    inst_table[0x1D] = &I_AD;
 
     return 0;
 }

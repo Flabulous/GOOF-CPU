@@ -2,12 +2,12 @@
 Literally me goofing off and making an entire virtual 8-bit CPU in C.
 
 # Registers:
-A - Accumulator
-B - Flag
+A - Basic Accumulator
+B - Logical Accumulator
 C - RAM Counter
 D - ROM Counter
 
-# 16 Instructions:
+# Basic Instructions:
 0x00 - Load ram pointed to by C into A register
 0x01 - Load ram pointed to by C into B register
 0x02 - Load ram pointed to by C into C register
@@ -27,6 +27,12 @@ D - ROM Counter
 0x0D - Add immediate 8bit data to B register
 0x0E - Add immediate 8bit data to C register
 0x0F - Add immediate 8bit data to D register
+
+# Logical Instructions:
+0x1A - If b = xx, Load ram pointed to by C into A register
+0x1B - If b = xx, Write A register into ram pointed to by C
+0x1C - If b = xx, Subtract immediate 8bit data from A register
+0x1D - If b = xx, Add immediate 8bit data to A register
 
 # Bank Switching:
 GOOF supports up to 255 different 256-byte banks, for a total of 65280 bytes. 
