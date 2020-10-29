@@ -7,7 +7,9 @@ B - Logical Accumulator
 C - RAM Counter
 D - ROM Counter
 
-# Basic Instructions:
+# Instructions:
+
+1 Byte:
 0x00 - Load ram pointed to by C into A register
 0x01 - Load ram pointed to by C into B register
 0x02 - Load ram pointed to by C into C register
@@ -18,6 +20,7 @@ D - ROM Counter
 0x06 - Write C register into ram pointed to by C
 0x07 - Write D register into ram pointed to by C
 
+2 Bytes:
 0x08 - Subtract immediate 8bit data from A register
 0x09 - Subtract immediate 8bit data from B register
 0x0A - Subtract immediate 8bit data from C register
@@ -28,7 +31,7 @@ D - ROM Counter
 0x0E - Add immediate 8bit data to C register
 0x0F - Add immediate 8bit data to D register
 
-# Logical Instructions:
+3 Bytes:
 0x1A - If b = xx, Load ram pointed to by C into A register
 0x1B - If b = xx, Write A register into ram pointed to by C
 0x1C - If b = xx, Subtract immediate 8bit data from A register
