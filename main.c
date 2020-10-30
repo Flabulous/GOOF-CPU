@@ -110,11 +110,12 @@ int main()
 
     char input[0xFF];
 
-getrom:
-    printf("Enter the name of the ROM:\n");
-    gets(input);
-    int i = pcopenrom(input);
-    if (i == -1) {goto getrom;} else {pcsetuprom();} //In case of improper file, go back to start
+    do{
+        printf("Enter the name of the ROM:\n");
+        gets(input);
+    }while(pcopenrom(input) == -1);
+
+    pcsetuprom();
 
     printf("Press Enter to run.\n");
     gets(input);
