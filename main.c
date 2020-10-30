@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <math.h>
+
+int GUI_ACTIVE = 0;
 FILE *rom_file;
 
 struct sbank {unsigned char *bank;};
@@ -60,8 +63,6 @@ int cpuRuntime();
 //SB - Subtract immediate 8 bits from register
 //AD - Add immediate 8 bits to register
 
-//I - Logical. Only affects the A register
-
 void LD_A() { a = ram[c];}
 void LD_B() { b = ram[c];}
 void LD_C() { c = ram[c];}
@@ -112,15 +113,23 @@ int main()
 
     do{
         printf("Enter the name of the ROM:\n");
-        gets(input);
+        fgets(input, 0xFF, stdin);
     }while(pcopenrom(input) == -1);
-
     pcsetuprom();
+
+    printf("Start with SDL GUI? (y/n)\n");
+    fgets(input, 0xFF, stdin);
+
+    if (input == "y") {
+        GUI_ACTIVE = 1;
+        printf("GUI will be used.\n");
+    }
 
     printf("Press Enter to run.\n");
     gets(input);
 
     initTable();
+    //if (GUI_ACTIVE == 1) {initGUI();};
     cpuRuntime();
     return 0;
 }
@@ -171,7 +180,6 @@ int initTable()
 }
 int cpuRuntime()
 {
-    int cycles =0;
     a = 0;
     b = 0;
     c = 0;
@@ -188,12 +196,12 @@ int cpuRuntime()
     {
         inst_table[rom[ram[0xFF]].bank[d]]();
         d++;
-        printf("%x %x %x %x - %d \r",a, b, c, d, ram[0xAA]);
-        sleep(1);
+        printf("%x %x %x %x - %d \r",a, b, c, d, ram[0xAA]); //Don't mind me, just a bit of debugging code
+        _sleep(1);
     }
 
     printf("CPU read EoF.");
     char input[1];
-    gets(input);
+    fgets(input, 1, stdin);
     return 0;
 }
