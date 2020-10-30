@@ -31,14 +31,29 @@ D - ROM Counter
 0x0E - Add immediate 8bit data to C register
 0x0F - Add immediate 8bit data to D register
 
-3 Bytes:
-0x1A - If b = xx, Load ram pointed to by C into A register
-0x1B - If b = xx, Write A register into ram pointed to by C
-0x1C - If b = xx, Subtract immediate 8bit data from A register
-0x1D - If b = xx, Add immediate 8bit data to A register
+0x10 - If b = xx, Load ram pointed to by C into A register
+0x11 - If b = xx, Load ram pointed to by C into B register
+0x12 - If b = xx, Load ram pointed to by C into C register
+0x13 - If b = xx, Load ram pointed to by C into D register
 
-# Bank Switching:
-GOOF supports up to 255 different 256-byte banks, for a total of 65280 bytes. 
+0x14 - If b = xx, Write A register into ram pointed to by C
+0x15 - If b = xx, Write B register into ram pointed to by C
+0x16 - If b = xx, Write C register into ram pointed to by C
+0x17 - If b = xx, Write D register into ram pointed to by C
+
+3 Bytes:
+0x18 - If b = xx, Subtract immediate 8bit data from A register
+0x19 - If b = xx, Subtract immediate 8bit data from B register
+0x1A - If b = xx, Subtract immediate 8bit data from C register
+0x1B - If b = xx, Subtract immediate 8bit data from D register
+
+0x1C - If b = xx, Add immediate 8bit data to A register
+0x1D - If b = xx, Add immediate 8bit data to B register
+0x1E - If b = xx, Add immediate 8bit data to C register
+0x1F - If b = xx, Add immediate 8bit data to D register
+
+# ROM Bank Switching:
+GOOF supports up to 255 different 256-byte ROM banks, for a total of 65280 bytes. 
 Banks are automatically split and created from the .bin file. 
 Editing RAM adress 0xFF will allow you to switch different banks. Writing 0xFF to this location will trigger an EoF and close the CPU.
 

@@ -82,10 +82,25 @@ void AD_B() { d++; a += rom[ram[0xFF]].bank[d];}
 void AD_C() { d++; c += rom[ram[0xFF]].bank[d];}
 void AD_D() { d++; d += rom[ram[0xFF]].bank[d];}
 
-void I_LD() { d++; if(b == rom[ram[0xFF]].bank[d]) {a = ram[c];}}
-void I_WT() { d++; if(b == rom[ram[0xFF]].bank[d]) {ram[c] = a;}}
-void I_SB() { d++; if(b == rom[ram[0xFF]].bank[d]) {d++; a -= rom[ram[0xFF]].bank[d];} else {d++;}}
-void I_AD() { d++; if(b == rom[ram[0xFF]].bank[d]) {d++; a += rom[ram[0xFF]].bank[d];} else {d++;}}
+void I_LD_A() { d++; if(b == rom[ram[0xFF]].bank[d]) {a = ram[c];}}
+void I_LD_B() { d++; if(b == rom[ram[0xFF]].bank[d]) {b = ram[c];}}
+void I_LD_C() { d++; if(b == rom[ram[0xFF]].bank[d]) {c = ram[c];}}
+void I_LD_D() { d++; if(b == rom[ram[0xFF]].bank[d]) {d = ram[c];}}
+
+void I_WT_A() { d++; if(b == rom[ram[0xFF]].bank[d]) {ram[c] = a;}}
+void I_WT_B() { d++; if(b == rom[ram[0xFF]].bank[d]) {ram[c] = b;}}
+void I_WT_C() { d++; if(b == rom[ram[0xFF]].bank[d]) {ram[c] = c;}}
+void I_WT_D() { d++; if(b == rom[ram[0xFF]].bank[d]) {ram[c] = d;}}
+
+void I_SB_A() { d++; if(b == rom[ram[0xFF]].bank[d]) {d++; a -= rom[ram[0xFF]].bank[d];} else {d++;}}
+void I_SB_B() { d++; if(b == rom[ram[0xFF]].bank[d]) {d++; b -= rom[ram[0xFF]].bank[d];} else {d++;}}
+void I_SB_C() { d++; if(b == rom[ram[0xFF]].bank[d]) {d++; c -= rom[ram[0xFF]].bank[d];} else {d++;}}
+void I_SB_D() { d++; if(b == rom[ram[0xFF]].bank[d]) {d++; d -= rom[ram[0xFF]].bank[d];} else {d++;}}
+
+void I_AD_A() { d++; if(b == rom[ram[0xFF]].bank[d]) {d++; a += rom[ram[0xFF]].bank[d];} else {d++;}}
+void I_AD_B() { d++; if(b == rom[ram[0xFF]].bank[d]) {d++; b += rom[ram[0xFF]].bank[d];} else {d++;}}
+void I_AD_C() { d++; if(b == rom[ram[0xFF]].bank[d]) {d++; c += rom[ram[0xFF]].bank[d];} else {d++;}}
+void I_AD_D() { d++; if(b == rom[ram[0xFF]].bank[d]) {d++; d += rom[ram[0xFF]].bank[d];} else {d++;}}
 
 void (*inst_table[256])();
 
@@ -131,10 +146,25 @@ int initTable()
     inst_table[0x0E] = &AD_C;
     inst_table[0x0F] = &AD_D;
 
-    inst_table[0x1A] = &I_LD;
-    inst_table[0x1B] = &I_WT;
-    inst_table[0x1C] = &I_SB;
-    inst_table[0x1D] = &I_AD;
+    inst_table[0x10] = &I_LD_A;
+    inst_table[0x11] = &I_LD_B;
+    inst_table[0x12] = &I_LD_C;
+    inst_table[0x13] = &I_LD_D;
+
+    inst_table[0x14] = &I_WT_A;
+    inst_table[0x15] = &I_WT_B;
+    inst_table[0x16] = &I_WT_C;
+    inst_table[0x17] = &I_WT_D;
+
+    inst_table[0x18] = &I_SB_A;
+    inst_table[0x19] = &I_SB_B;
+    inst_table[0x1A] = &I_SB_C;
+    inst_table[0x1B] = &I_SB_D;
+
+    inst_table[0x1C] = &I_AD_A;
+    inst_table[0x1D] = &I_AD_B;
+    inst_table[0x1E] = &I_AD_C;
+    inst_table[0x1F] = &I_AD_D;
 
     return 0;
 }
