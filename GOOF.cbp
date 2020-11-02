@@ -30,7 +30,16 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add directory="SDL2-dev/SDL2-2.0.12/x86_64-w64-mingw32/include/SDL2" />
 		</Compiler>
+		<Linker>
+			<Add option="-lmingw32 -lSDL2main -lSDL2" />
+			<Add directory="SDL2-dev/SDL2-2.0.12/x86_64-w64-mingw32/lib" />
+		</Linker>
+		<Unit filename="goof.h" />
+		<Unit filename="gui.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>

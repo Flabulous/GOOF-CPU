@@ -1,63 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 #include <math.h>
-
-int GUI_ACTIVE = 0;
-FILE *rom_file;
-
-struct sbank {unsigned char *bank;};
-struct sbank rom[256];
-
-unsigned char *ram;
-unsigned char a,b,c,d; //Registers: a: Accumulator | b: Logical Accumulator | c: RAM pointer | d: ROM pointer
-
-//Front-end functions
-int pcopenrom(char nme[256])
-{
-    //Open ROM file
-    rom_file = fopen(nme, "rb");
-
-    //In case of improper file, return
-    if (rom_file == NULL) {
-        fclose(rom_file);
-        printf("Error opening file\n");
-        return -1;
-    }
-
-    printf("File opened.\n");
-    return 0;
-}
-
-int pcsetuprom()
-{
-    //Find size of ROM file (totally not grabbed from Stack)
-    fseek(rom_file, 0, SEEK_END);
-    int SIZE = ftell(rom_file);
-    fseek(rom_file, 0, SEEK_SET);
-
-    printf("ROM is %d bytes in size.\n", SIZE);
-
-    int banks = round(SIZE/256);
-    //Load selected ROM into memory
-    printf("Loading...\n");
-    for (int i = banks; i >= 0; i--) {
-        rom[i].bank = malloc(256);
-        fread(rom[i].bank, 1, 256, rom_file);
-    }
-
-    fclose(rom_file);
-    printf("Loaded.\n");
-
-    return 0;
-}
-
-//Back-end functions
-int initTable();
-int cpuRuntime();
-
-//Instructions
-
+#include "goof.h"
+//Instructions:
 //LD - Load from space in RAM that's pointed to by C
 //WT - Write to space in RAM that's pointed to by C
 //SB - Subtract immediate 8 bits from register
@@ -105,35 +52,6 @@ void I_AD_D() { d++; if(b == rom[ram[0xFF]].bank[d]) {d++; d += rom[ram[0xFF]].b
 
 void (*inst_table[256])();
 
-int main()
-{
-    printf("GOOF CPU loaded.\n");
-
-    char input[0xFF];
-
-    do{
-        printf("Enter the name of the ROM:\n");
-        fgets(input, 0xFF, stdin);
-    }while(pcopenrom(input) == -1);
-    pcsetuprom();
-
-    printf("Start with SDL GUI? (y/n)\n");
-    fgets(input, 0xFF, stdin);
-
-    if (input == "y") {
-        GUI_ACTIVE = 1;
-        printf("GUI will be used.\n");
-    }
-
-    printf("Press Enter to run.\n");
-    gets(input);
-
-    initTable();
-    //if (GUI_ACTIVE == 1) {initGUI();};
-    cpuRuntime();
-    return 0;
-}
-
 int initTable()
 {
     inst_table[0x00] = &LD_A;
@@ -178,6 +96,48 @@ int initTable()
 
     return 0;
 }
+
+//Front-end functions
+int pcopenrom(char nme[0xFF])
+{
+    //Open ROM file
+    printf("Attempting to open '%s'\n", nme);
+    rom_file = fopen(nme, "rb");
+
+    //In case of improper file, return
+    if (rom_file == NULL) {
+        fclose(rom_file);
+        printf("Error opening file\n");
+        return -1;
+    }
+
+    printf("File opened.\n");
+    return 0;
+}
+
+int pcsetuprom()
+{
+    //Find size of ROM file (totally not grabbed from Stack)
+    fseek(rom_file, 0, SEEK_END);
+    int SIZE = ftell(rom_file);
+    fseek(rom_file, 0, SEEK_SET);
+
+    printf("ROM is %d bytes in size.\n", SIZE);
+
+    int banks = round(SIZE/256);
+    //Load selected ROM into memory
+    printf("Loading...\n");
+    for (int i = banks; i >= 0; i--) {
+        rom[i].bank = malloc(256);
+        fread(rom[i].bank, 1, 256, rom_file);
+    }
+
+    fclose(rom_file);
+    printf("Loaded.\n");
+
+    return 0;
+}
+
 int cpuRuntime()
 {
     a = 0;
@@ -197,11 +157,36 @@ int cpuRuntime()
         inst_table[rom[ram[0xFF]].bank[d]]();
         d++;
         printf("%x %x %x %x - %d \r",a, b, c, d, ram[0xAA]); //Don't mind me, just a bit of debugging code
-        _sleep(1);
     }
 
     printf("CPU read EoF.");
     char input[1];
     fgets(input, 1, stdin);
+    return 0;
+}
+
+int main(int argc, char* args[])
+{
+    printf("GOOF CPU loaded.\n");
+
+    char input[0xFF];
+
+    do{
+        printf("Enter the name of the ROM:\n");
+        gets(input); //I hate using this but I cannot use anything else because escape sequences
+    }while(pcopenrom(input) == -1);
+    pcsetuprom();
+
+    printf("Start with SDL GUI? (1/0)\n");
+    int in = 0;
+    scanf("%d", &in); //I hate using this but I cannot use anything else because escape sequences
+    int GUI_ACTIVE = 0;
+    if (in == 1) {
+        GUI_ACTIVE = 1;
+    }
+
+    initTable();
+    if (GUI_ACTIVE == 1) {initGUI();};
+    cpuRuntime();
     return 0;
 }
