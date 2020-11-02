@@ -27,6 +27,7 @@ int initGUI()
 
 int refreshGUI()
 {
+    SDL_FillRect(gui_screen, NULL, SDL_MapRGB(gui_screen->format, 0xFF, 0xFF, 0xFF));
 
     return 0;
 }
