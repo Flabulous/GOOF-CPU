@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1604503650 source:c:\users\arandor\documents\github\goof-cpu\main.c
+1604504706 source:c:\users\arandor\documents\github\goof-cpu\main.c
 	<stdio.h>
 	<stdlib.h>
 	<stdint.h>
@@ -729,6 +729,6 @@
 	"begin_code.h"
 	"close_code.h"
 
-1604503650 c:\users\arandor\documents\github\goof-cpu\goof.h
+1604504706 c:\users\arandor\documents\github\goof-cpu\goof.h
 	"SDL.h"
 
