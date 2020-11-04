@@ -50,8 +50,6 @@ void I_AD_B() { d++; if(b == rom[ram[0xFF]].bank[d]) {d++; b += rom[ram[0xFF]].b
 void I_AD_C() { d++; if(b == rom[ram[0xFF]].bank[d]) {d++; c += rom[ram[0xFF]].bank[d];} else {d++;}}
 void I_AD_D() { d++; if(b == rom[ram[0xFF]].bank[d]) {d++; d += rom[ram[0xFF]].bank[d];} else {d++;}}
 
-void (*inst_table[256])();
-
 int initTable()
 {
     inst_table[0x00] = &LD_A;
@@ -126,7 +124,7 @@ int pcsetuprom()
 
     int banks = round(SIZE/256);
     //Load selected ROM into memory
-    printf("Loading...\n");
+    printf("Loading... ");
     for (int i = banks; i >= 0; i--) {
         rom[i].bank = malloc(256);
         fread(rom[i].bank, 1, 256, rom_file);
@@ -156,7 +154,8 @@ int cpuRuntime()
     {
         inst_table[rom[ram[0xFF]].bank[d]]();
         d++;
-        printf("%x %x %x %x - %d \r",a, b, c, d, ram[0xAA]); //Don't mind me, just a bit of debugging code
+        if (GUI_ACTIVE == 1) {refreshGUI();}
+        // printf("%x %x %x %x - %d \r",a, b, c, d, ram[0xAA]); //Don't mind me, just a bit of debugging code
     }
 
     printf("CPU read EoF.");
@@ -180,7 +179,6 @@ int main(int argc, char* args[])
     printf("Start with SDL GUI? (1/0)\n");
     int in = 0;
     scanf("%d", &in); //I hate using this but I cannot use anything else because escape sequences
-    int GUI_ACTIVE = 0;
     if (in == 1) {
         GUI_ACTIVE = 1;
     }
